@@ -104,7 +104,7 @@ class Provider
     public function __construct(Repository $repository, ServerRequestInterface $request = null)
     {
         $this->repository = $repository;
-        
+
         if ($request) {
             $this->setRequest($request);
         }
@@ -235,10 +235,10 @@ class Provider
 
         $record = $this->repository->getRecord($this->params['metadataPrefix'], $this->params['identifier']);
         $recordNode = $this->response->createElement('record');
-        
+
         $header = $record->getHeader();
         $recordNode->appendChild($this->getRecordHeaderNode($header));
-        
+
         // Only add metadata and about if the record is not deleted.
         if (!$header->isDeleted()) {
             $recordNode->appendChild($this->response->createElement('metadata', $record->getMetadata()));
@@ -409,10 +409,10 @@ class Provider
         //create 'record' node for each record with a 'header', 'metadata' and possibly 'about' node
         foreach ($records->getItems() as $record) {
             $recordNode = $this->response->createElement('record');
-            
+
             $header = $record->getHeader();
             $recordNode->appendChild($this->getRecordHeaderNode($header));
-            
+
             // Only add metadata and about if the record is not deleted.
             if (!$header->isDeleted()) {
                 $recordNode->appendChild($this->response->createElement('metadata', $record->getMetadata()));
@@ -543,16 +543,16 @@ class Provider
     private function addResumptionToken(ResultListInterface $resultList, $listNode)
     {
         // @TODO Add support for expirationDate
-        
+
         $resumptionTokenNode = null;
-        
+
         if ($resultList->getResumptionToken()) {
             $resumptionTokenNode = $this->response->createElement('resumptionToken', $resultList->getResumptionToken());
         } elseif ($resultList->getCompleteListSize() !== null || $resultList->getCursor() !== null) {
             // An empty resumption token with attributes completeListSize and/or cursor.
             $resumptionTokenNode = $this->response->createElement('resumptionToken');
         }
-        
+
         if ($resultList->getCompleteListSize() !== null) {
             $resumptionTokenNode->setAttribute('completeListSize', $resultList->getCompleteListSize());
         }
@@ -560,7 +560,7 @@ class Provider
         if ($resultList->getCursor() !== null) {
             $resumptionTokenNode->setAttribute('cursor', $resultList->getCursor());
         }
-    
+
         if ($resumptionTokenNode !== null) {
             $listNode->appendChild($resumptionTokenNode);
         }
@@ -620,7 +620,7 @@ class Provider
                     );
                 }
             },
-            function () use ($metadataPrefix) {
+            function () use (&$metadataPrefix) {
                 if (!isset($this->params['metadataPrefix'])) {
                     throw new BadArgumentException("Missing required argument metadataPrefix");
                 }
@@ -628,11 +628,11 @@ class Provider
                 $this->checkMetadataPrefix($metadataPrefix);
             }
         ];
-        
+
         $this->doChecks($checks);
         return array($metadataPrefix, $from, $until, $set);
     }
-    
+
     /**
      * Checks if the metadata prefix is in the available metadata formats list.
      * @param string $metadataPrefix
@@ -642,7 +642,7 @@ class Provider
     private function checkMetadataPrefix($metadataPrefix, $identifier = null)
     {
         $availableMetadataFormats = $this->repository->listMetadataFormats($identifier);
-        
+
         $found = false;
         if (!empty($availableMetadataFormats)) {
             foreach ($availableMetadataFormats as $metadataFormat) {
@@ -652,7 +652,7 @@ class Provider
                 }
             }
         }
-        
+
         if (!$found) {
             throw new CannotDisseminateFormatException(
                 'The metadata format identified by the value given for the metadataPrefix argument '
